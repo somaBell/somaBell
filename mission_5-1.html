@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カレンダー</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .today {
+      background-color: #ffcccb; /* ピンク色など */
+    }
+    .weekend {
+      color: blue;
+    }
+  </style>
+</head>
+<body>
+
+<h2 id="currentMonth">カレンダー</h2>
+
+<table id="calendar">
+  <thead>
+    <tr>
+      <th>日</th>
+      <th>月</th>
+      <th>火</th>
+      <th>水</th>
+      <th>木</th>
+      <th>金</th>
+      <th class="weekend">土</th>
+    </tr>
+  </thead>
+  <tbody>
+   
+  </tbody>
+</table>
+
+<script>
+ 
+  function renderCalendar(year, month) {
+    const calendarBody = document.getElementById("calendar").getElementsByTagName('tbody')[0];
+    const currentMonthElement = document.getElementById("currentMonth");
+
+    // 現在の日付
+    const today = new Date();
+
+    // 月の初日
+    const firstDayOfMonth = new Date(year, month, 1);
+
+    // 月の最終日
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+
+    // カレンダーの最初の日
+    let currentDay = new Date(firstDayOfMonth);
+
+    // カレンダーの日付
+    while (currentDay <= lastDayOfMonth) {
+      
+      const row = calendarBody.insertRow();
+
+      // 1週間分の日付
+      for (let i = 0; i < 7; i++) {
+        const cell = row.insertCell();
+        
+        if (currentDay <= lastDayOfMonth && currentDay >= firstDayOfMonth) {
+          cell.textContent = currentDay.getDate();
+
+          // 土日
+          if (i === 0 || i === 6) {
+            cell.classList.add("weekend");
+          }
+
+          // 当日
+          if (
+            currentDay.getFullYear() === today.getFullYear() &&
+            currentDay.getMonth() === today.getMonth() &&
+            currentDay.getDate() === today.getDate()
+          ) {
+            cell.classList.add("today");
+          }
+
+          
+          currentDay.setDate(currentDay.getDate() + 1);
+        }
+      }
+    }
+
+    
+    currentMonthElement.textContent = `${year}年${month + 1}月`;
+  }
+
+  // カレンダーを初期化
+  const today = new Date();
+  renderCalendar(today.getFullYear(), today.getMonth());
+
+  
+  document.getElementById("calendar").addEventListener("click", function(event) {
+    if (event.target.tagName === "TD") {
+      const selectedDate = parseInt(event.target.textContent);
+      const currentMonth = today.getMonth();
+      let nextMonth = today.getMonth() + 1;
+
+      if (nextMonth > 11) {
+        today.setFullYear(today.getFullYear() + 1);
+        nextMonth = 0;
+      }
+
+      if (selectedDate && selectedDate > 0) {
+        today.setMonth(currentMonth);
+        today.setDate(selectedDate);
+        renderCalendar(today.getFullYear(), nextMonth);
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
